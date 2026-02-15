@@ -36,7 +36,7 @@ jobs:
 
           # IDs extrahieren
           import re
-          ids = re.findall(r"videoId>(.*?)<", r.text)
+          ids = re.findall(r"(?:<yt:videoId>|<videoId>)(.*?)(?:</yt:videoId>|</videoId>)", r.text)
 
           # JSON speichern
           with open("playlist.json", "w") as f:
