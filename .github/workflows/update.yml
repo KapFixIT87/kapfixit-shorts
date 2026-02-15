@@ -22,27 +22,28 @@ jobs:
         run: |
           pip install requests
           python3 << 'EOF'
-          import requests, json
+          import requests, json, re
 
-          PLAYLIST_ID = "PL9G0WUZWy99CYQiAji55WTr4eGt7aQXJQ"
-          API_KEY = "AIzaSyD-FAKE-KEY-123456789"  # Dummy Key – wird NICHT genutzt
+          # Deine KANAL-FEED-ID (richtig!)
+          CHANNEL_ID = "UU8K8w937XhG3KaCHE1xjQvg"
 
-          url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={PLAYLIST_ID}"
+          url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={CHANNEL_ID}"
           r = requests.get(url)
 
           if r.status_code != 200:
-              print("Fehler beim Abrufen der Playlist")
+              print("Fehler beim Abrufen des Feeds:", r.status_code)
               exit(1)
 
-          # IDs extrahieren
-          import re
-          ids = re.findall(r"(?:<yt:videoId>|<videoId>)(.*?)(?:</yt:videoId>|</videoId>)", r.text)
+          # IDs extrahieren (robust)
+          ids = re.findall(r"<yt:videoId>(.*?)</yt:videoId>", r.text)
+
+          print("Gefundene IDs:", ids)
 
           # JSON speichern
           with open("playlist.json", "w") as f:
               json.dump(ids, f)
 
-          print("Playlist aktualisiert:", ids)
+          print("playlist.json aktualisiert.")
           EOF
 
       - name: Änderungen committen
