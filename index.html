@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KapFixIT Shorts – Automatisches Grid</title>
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #05060a;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .item {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e5e5e5;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
+    }
+
+    .item img {
+      width: 100%;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>KapFixIT Shorts – Automatisches Grid</h1>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    fetch("playlist.json")
+      .then(r => r.json())
+      .then(videos => {
+        const grid = document.getElementById("grid");
+        videos.forEach(id => {
+          const item = document.createElement("a");
+          item.className = "item";
+          item.href = "https://youtube.com/watch?v=" + id;
+          item.target = "_blank";
+          item.innerHTML = `<img src="https://img.youtube.com/vi/${id}/maxresdefault.jpg">`;
+          grid.appendChild(item);
+        });
+      });
+  </script>
+</body>
+</html>
