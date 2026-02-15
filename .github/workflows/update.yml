@@ -24,9 +24,10 @@ jobs:
           python3 << 'EOF'
           import requests, json, re
 
-          # Deine KANAL-FEED-ID (richtig!)
+          # Deine ECHTE Kanal-Feed-ID
           CHANNEL_ID = "UU8K8w937XhG3KaCHE1xjQvg"
 
+          # Feed-URL
           url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={CHANNEL_ID}"
           r = requests.get(url)
 
@@ -34,7 +35,7 @@ jobs:
               print("Fehler beim Abrufen des Feeds:", r.status_code)
               exit(1)
 
-          # IDs extrahieren (robust)
+          # IDs extrahieren
           ids = re.findall(r"<yt:videoId>(.*?)</yt:videoId>", r.text)
 
           print("Gefundene IDs:", ids)
