@@ -27,8 +27,10 @@ jobs:
           # Deine echte PLAYLIST-ID
           PLAYLIST_ID = "PL9G0WUZWy99CYQiAji55WTr4eGt7aQXJQ"
 
+          # Playlist-Feed URL
           url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={PLAYLIST_ID}"
 
+          # Browser-User-Agent, damit YouTube nicht blockiert
           headers = {
               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
           }
@@ -39,10 +41,12 @@ jobs:
               print("Fehler beim Abrufen des Feeds:", r.status_code)
               exit(1)
 
+          # Video-IDs extrahieren
           ids = re.findall(r"<yt:videoId>(.*?)</yt:videoId>", r.text)
 
           print("Gefundene IDs:", ids)
 
+          # JSON speichern
           with open("playlist.json", "w") as f:
               json.dump(ids, f)
 
@@ -60,3 +64,4 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
