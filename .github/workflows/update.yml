@@ -1,0 +1,58 @@
+name: Update YouTube Playlist
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # alle 10 Minuten
+  workflow_dispatch:         # manuell startbar
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v3
+
+      - name: Python installieren
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Playlist aktualisieren
+        run: |
+          pip install requests
+          python3 << 'EOF'
+          import requests, json
+
+          PLAYLIST_ID = "PL9G0WUZWy99CYQiAji55WTr4eGt7aQXJQ"
+          API_KEY = "AIzaSyD-FAKE-KEY-123456789"  # Dummy Key – wird NICHT genutzt
+
+          url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={PLAYLIST_ID}"
+          r = requests.get(url)
+
+          if r.status_code != 200:
+              print("Fehler beim Abrufen der Playlist")
+              exit(1)
+
+          # IDs extrahieren
+          import re
+          ids = re.findall(r"videoId>(.*?)<", r.text)
+
+          # JSON speichern
+          with open("playlist.json", "w") as f:
+              json.dump(ids, f)
+
+          print("Playlist aktualisiert:", ids)
+          EOF
+
+      - name: Änderungen committen
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add playlist.json
+          git commit -m "Auto-update playlist" || echo "Keine Änderungen"
+
+      - name: Änderungen pushen
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
