@@ -24,25 +24,28 @@ jobs:
           python3 << 'EOF'
           import requests, json, re
 
-          # Deine echte Kanal-Feed-ID
-          CHANNEL_ID = "UU8K8w937XhG3KaCHE1xjQvg"
+CHANNEL_ID = "UU8K8w937XhG3KaCHE1xjQvg"
 
-          url = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL_ID}"
-          r = requests.get(url)
+url = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL_ID}"
 
-          if r.status_code != 200:
-              print("Fehler beim Abrufen des Feeds:", r.status_code)
-              exit(1)
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+}
 
-          ids = re.findall(r"<yt:videoId>(.*?)</yt:videoId>", r.text)
+r = requests.get(url, headers=headers)
 
-          print("Gefundene IDs:", ids)
+if r.status_code != 200:
+    print("Fehler beim Abrufen des Feeds:", r.status_code)
+    exit(1)
 
-          with open("playlist.json", "w") as f:
-              json.dump(ids, f)
+ids = re.findall(r"<yt:videoId>(.*?)</yt:videoId>", r.text)
 
-          print("playlist.json aktualisiert.")
-          EOF
+print("Gefundene IDs:", ids)
+
+with open("playlist.json", "w") as f:
+    json.dump(ids, f)
+
+print("playlist.json aktualisiert.")
 
       - name: Änderungen committen
         run: |
